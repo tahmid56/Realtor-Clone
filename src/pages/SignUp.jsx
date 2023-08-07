@@ -1,10 +1,35 @@
 import React, { useState } from 'react';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import OAuth from '../components/OAuth';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { db } from '../utils/firebaseConfig';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { toast } from 'react-toastify';
 export default function SignUp() {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({ email: '', name: '', password: '' });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const auth = getAuth();
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            updateProfile(auth.currentUser, {
+                displayName: formData.name,
+            });
+            const user = userCredential.user;
+            const formDataCopy = { ...formData };
+            delete formDataCopy.password;
+            formDataCopy.timestamp = serverTimestamp();
+
+            await setDoc(doc(db, 'users', user.uid), formDataCopy);
+            toast.success('Sign up successful!');
+            navigate('/');
+        } catch (error) {
+            toast.error('Something went wrong with Registration!');
+        }
+    };
     return (
         <section>
             <h1 className="text-3xl font-bold  text-center mt-6">Sign In</h1>
@@ -17,7 +42,7 @@ export default function SignUp() {
                     />
                 </div>
                 <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <input
                             type="email"
                             id="email"
@@ -57,12 +82,12 @@ export default function SignUp() {
                         </div>
                         <div className="flex justify-between whitespace-nowrap text-sm sm:text-lg">
                             <p className="mb-6">
-                                Don't have an Account?
+                                Already Have An Account?
                                 <Link
                                     to="/sign-up"
                                     className="text-red-600 hover:text-red-700 transition duration-200 ease-in-out ml-1"
                                 >
-                                    Register
+                                    Sign In
                                 </Link>
                             </p>
                             <p>
