@@ -1,16 +1,22 @@
-import React from 'react';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
 export default function Header() {
     const location = useLocation();
     const navigate = useNavigate();
-    console.log(location.pathname);
-    const pathMatchRoute = (route) => {
-        if (route == location.pathname) {
-            return true;
-        }
-    };
+    const auth = getAuth();
+    const [pageState, setPageState] = useState('Sign in');
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setPageState('Profile');
+            } else {
+                setPageState('Sign in');
+            }
+        });
+    }, [auth]);
     return (
         <div className="bg-white border-b shadow-sm sticky top-0 z-50">
             <header className="flex justify-between items-center px-3 max-w-6xl mx-auto">
@@ -46,15 +52,15 @@ export default function Header() {
                                 Offers
                             </li>
                         </Link>
-                        <Link to="/sign-in">
+                        <Link to={pageState == 'Sign in' ? '/sign-in' : '/profile'}>
                             <li
                                 className={
-                                    location.pathname == '/sign-in'
+                                    location.pathname == '/sign-in' || location.pathname == '/profile'
                                         ? 'py-3 text-sm font-semibold border-b-[3px] text-black border-b-red-500'
                                         : 'py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent'
                                 }
                             >
-                                Sign in
+                                {pageState}
                             </li>
                         </Link>
                     </ul>
