@@ -7,7 +7,7 @@ export default function Header() {
     const navigate = useNavigate();
     console.log(location.pathname);
     const pathMatchRoute = (route) => {
-        if (route === location.pathname) {
+        if (route == location.pathname) {
             return true;
         }
     };
@@ -26,27 +26,33 @@ export default function Header() {
                     <ul className="flex space-x-10">
                         <Link to="/">
                             <li
-                                className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                                    pathMatchRoute('/') && 'text-black border-b-red-500'
-                                }`}
+                                className={
+                                    location.pathname == '/'
+                                        ? 'py-3 text-sm font-semibold border-b-[3px] text-black border-b-red-500'
+                                        : 'py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent'
+                                }
                             >
                                 Home
                             </li>
                         </Link>
                         <Link to="/offers">
                             <li
-                                className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                                    pathMatchRoute('/offers') && 'text-black border-b-red-500'
-                                }`}
+                                className={
+                                    location.pathname == '/offers'
+                                        ? 'py-3 text-sm font-semibold border-b-[3px] text-black border-b-red-500'
+                                        : 'py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent'
+                                }
                             >
                                 Offers
                             </li>
                         </Link>
                         <Link to="/sign-in">
                             <li
-                                className={`py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent ${
-                                    pathMatchRoute('/sign-in') && 'text-black border-b-red-500'
-                                }`}
+                                className={
+                                    location.pathname == '/sign-in'
+                                        ? 'py-3 text-sm font-semibold border-b-[3px] text-black border-b-red-500'
+                                        : 'py-3 text-sm font-semibold text-gray-400 border-b-[3px] border-b-transparent'
+                                }
                             >
                                 Sign in
                             </li>
